@@ -1,0 +1,99 @@
+<html>
+<head>
+<style>
+  div {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -50%);
+  }
+  fieldset{
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+    width:500px;
+    background:#dee1e5;
+    opacity:.9;       
+  }
+  legend{
+    font-size: 20px;
+  }
+  input[type='text'], input[type='password']{
+    width:300px;
+    float:right;
+  }
+  body{
+   background: #dee1e5;
+   opacity:.9
+  }
+  input[type='button']{
+    padding:5px;
+    margin-left: 5px;
+    float:right;
+  }
+  
+</style>
+<script>
+  function getAnswer(){
+    // Captures user input
+    var un = document.getElementById('UCID').value;
+    var pw = document.getElementById('password').value;
+    if(un.length == 0 | pw.length == 0 ){
+        document.getElementById('text').innerHTML = "Please enter both UCID and password to log in.";
+      return false;
+    }
+    else{
+      document.getElementById('text').innerHTML = "";
+    }
+    var params = "UCID="+un+"&password="+pw;
+    // Ajax POST request to server
+    var xmlhttp = new XMLHttpRequest();
+      xmlhttp.open("POST", "curlpost.php", true);
+      xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        // Captures server response
+        var resp = xmlhttp.responseText;
+        // Find relevant sunstrings in response 
+        var njit=resp.indexOf("SUCCESSFUL");
+        var db=resp.indexOf("true");
+        // Displays server response to client
+        if(njit > -1){
+          document.getElementById('njitRes').innerHTML = "Welcome to NJIT!";
+        }else{
+          document.getElementById('njitRes').innerHTML = "NJIT does not recognize you!";
+        }
+        if(db > -1){
+          document.getElementById('dbRes').innerHTML = "You have been thoroughly vetted. Welcome to OUR domain!";
+        }else{
+          document.getElementById('dbRes').innerHTML = "Who are you? You shall not pass!";
+        }
+      }
+      };
+      // Executes request to server
+      xmlhttp.send(params);
+  }
+</script>
+<body>
+<div>
+<form>
+  <p><span id="text" style="color:red"></span></p>
+  <fieldset class="text-center">
+  <legend>Enter valid credentials to log in.</legend>
+  <p>
+    <label for="UCID">UCID: </label>
+    <input id="UCID" type="text" placeholder="UCID">
+  </p>
+  <p>
+    <label for="UCID">Password: </label>
+    <input id="password" type="password" placeholder="Password">
+  </p>
+  <input type="button" value="Submit" onclick="getAnswer()">
+  <input type="button" value="Refresh" onclick="window.location.reload();">
+  </fieldset>
+</form>
+  <p><span id="njitRes" style="color:blue"></span></p>
+  <p><span id="dbRes" style="color:blue"></span></p>
+  </div>
+</body>
+</head>
+</html>
+
