@@ -19,41 +19,57 @@ $newQ = $_POST [ "newQ" ] ;
 $testcase = $_POST [ "testcase" ] ;
 $funcName = $_POST [ "funcName" ] ;
 $parameters = $_POST [ "parameters" ] ;
-$examQ = $_POST [ "examQ" ] ;
+$examQ = $_POST [ "examQ" ] ; //comma delimited
 $examName = $_POST [ "examName" ] ;
 $category = $_POST [ "category" ] ;
 $difficulty = $_POST [ "difficulty" ] ;
 $grade = $_POST [ "grade" ] ;
-  
+
 if ($struct == 'addQuestion'){
 	$s = "INSERT INTO questions (question,category,difficulty)
 	VALUES ('$newQ', '$category','$difficulty')";
 	mysqli_query($db,$s);
 	$s = "INSERT INTO testcases (testcase,functionName,parameters)
 	VALUES ('$testcase', '$funcName','$parameters')";
+	mysqli_query($db,$s);
 	//echo "inserted";
-	mysqli_free_result($s);
-	mysqli_close($db);
-	exit();
 }
 if ($struct == 'makeExam'){
-	//so much logic
+	$s = "insert into exams (examName)
+	VALUES ('$examName')"; 
+	mysqli_query($db,$s);
+	$s="SELECT examID from exams where examName='$examName'";
+	$t=mysqli_query($db,$s);
+	$row=mysqli_fetch_row($t);
+	$theExam = $row[0];
+	$qArray = explode(',', $examQ);
+	foreach($qArray as $entry){
+		$s = "UPDATE questions
+		SET examID = '$theExam'
+		where questionID = '$entry'"
+		mysqli_query( $db,  $s );
+	}
 }
 if ($struct == 'takeExam'){
-	$s="SELECT examID from exams where name='$examName'";
+	$s="SELECT examID from exams where examName='$examName'";
 	$t=mysqli_query($db,$s);
 	$row=mysqli_fetch_row($t);
 	$theExam = $row[0];
 	$s="SELECT question from questions where examID='$theExam'";
 	$t=mysqli_query($db,$s);
 	//return the exam in an array using JSON
+	
 }
 if ($struct == 'storeAnswers'){
 	//store answers and send testcases
 }
+if ($struct == 'gradeExam'){
+	//store answers and send testcases
+}
 if ($struct == 'storeGrade'){
-	$s = "insert into users (betaGrade)
-	VALUES ('$grade')"; 
+	$s = "UPDATE users
+	SET betaGrade = '$grade'
+	where UCID = '$UCID'"
 	($t = mysqli_query( $db,  $s ));
 }
 if ($struct == 'releaseGrade'){
@@ -61,8 +77,9 @@ if ($struct == 'releaseGrade'){
 	$t=mysqli_query($db,$s);
 	$row=mysqli_fetch_row($t);
 	$theGrade = $row[0];
-	$s = "insert into users (releaseGrade)
-	VALUES ('$theGrade')"; 
+	$s = "UPDATE users
+	SET releaseGrade = '$theGrade'
+	where UCID = '$UCID'"
 	($t = mysqli_query( $db,  $s ));
 }
 if ($struct == 'viewGrade'){
@@ -72,7 +89,7 @@ if ($struct == 'viewGrade'){
 	$theGrade = $row[0];
 	//return theGrade using JSON
 }
-
+mysqli_free_result($s);
 mysqli_close($db);
 exit();
 
