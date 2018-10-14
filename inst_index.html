@@ -1,0 +1,20 @@
+<html>
+<head>
+<title>NJIT Instructor Home</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<p id="msg"></p>
+  <a href="/~lr66/download/newQuestion.html">Add a Question to Test Bank</a></br>
+  <a href="">Make Exam</a></br>
+  <a href="">Grade Exam</a>
+</body>
+</html>
+<script>
+window.onload = function() { 
+  if (localStorage.getItem('UCID')) {
+    document.getElementById('msg').innerHTML = "Welcome " + localStorage.getItem('UCID')+ "!"; 
+ }
+}
+
+</script>

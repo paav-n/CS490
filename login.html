@@ -1,5 +1,6 @@
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   div {
     position: absolute;
@@ -53,24 +54,32 @@
         // Captures server response
         var resp = xmlhttp.responseText;
         // Find relevant sunstrings in response 
-        var njit=resp.indexOf("SUCCESSFUL");
-        var db=resp.indexOf("true");
+        var lsucc=resp.indexOf("true");
+        var role=resp.indexOf("teacher");
+
         // Displays server response to client
-        if(njit > -1){
-          document.getElementById('njitRes').innerHTML = "Welcome to NJIT!";
-        }else{
-          document.getElementById('njitRes').innerHTML = "NJIT does not recognize you!";
+        if(lsucc > -1){
+          (function (global){
+        global.localStorage.setItem('UCID',un);
+        }(window));
+          if(role > -1){ 
+            //redirects to teacher view
+            window.location.pathname = '/~lr66/download/inst_index.html';
+          }else{
+            //redirects to student view
+            window.location.pathname = '/~lr66/download/st_index.html';
+          }  
         }
-        if(db > -1){
-          document.getElementById('dbRes').innerHTML = "You have been thoroughly vetted. Welcome to OUR domain!";
-        }else{
-          document.getElementById('dbRes').innerHTML = "Who are you? You shall not pass!";
+        else{
+          document.getElementById('njitRes').innerHTML = "UCID/Password incorrect!";
         }
       }
       };
       // Executes request to server
       xmlhttp.send(params);
   }
+  
+
 </script>
 <body>
 <div>
@@ -96,4 +105,10 @@
 </body>
 </head>
 </html>
+
+
+//teach: njitteach
+//pass: njitsucks
+//student: jh465
+//pass: saintnick
 
