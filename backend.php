@@ -27,44 +27,22 @@ if(password_verify($thepassword, $hash)){
   }
 else $response = 'false';
 
-$u = $mysqli->query("SELECT UCID FROM people WHERE UCID = '$UCID'");
-if($u->num_rows == 0) {
-     $response = 'false';
+if ($thepassword == ""){
+  $response = 'false';
 }
 
 echo $response;
 
-/*
-
-$url = 'https://web.njit.edu/~jh465/middle.php';
- 
-//Send URL
-$ch = curl_init($url);
- 
-//DATA
-$jsonData = array('response' => $response);
-
-//Encode
-$jsonDataEncoded = json_encode($jsonData);
-
-//POST request.
-curl_setopt($ch, CURLOPT_POST, 1);
- 
-//JSON string to the POST fields.
-curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);
- 
-//Set the content type to application/json
-curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json')); 
- 
-//Execute the request
-$result = curl_exec($ch);
-
-//close
-curl_close($ch);
-
-*/
+if ($response == 'true'){
+	$q="SELECT role from people where UCID='$UCID'";
+	$w=mysqli_query($db,$q);
+	$rowe=mysqli_fetch_row($w);
+	$therole = $rowe[0];
+	echo $therole;
+}
 
 mysqli_free_result($t);
+mysqli_free_result($w);
 mysqli_close($db);
 exit();
 
