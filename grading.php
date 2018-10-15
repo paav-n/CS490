@@ -2,7 +2,6 @@
 
 //ini_set('display_errors',1);
 //error_reporting(E_ALL);
-
 $ucid = $_POST['UCID'];
 $struct = $_POST['struct'];
 $newQ = $_POST [ "newQ" ] ;
@@ -42,18 +41,20 @@ $resp = curl_exec($send);
 
 curl_close($send);
 echo $resp; 
-
 //if answer is set do all this
+//assuming answer and examQ sent at same time
+if(isset($_POST['answer'], $_POST['examQ'])){
 $struct = 'gradeExam';
-$split_questionID = explode(",", $examQ);
-$count = count($split_questionID);
-
+$split_questionID = explode(",", $examQ);//getting question ids
+$count = count($split_questionID);//the number of questions
+}
 
 for($i = 0; $i < $count; $i++){
+
   $singleExamQ = $split_questionID[$i];
   $data1 = array('struct'=>$struct, 'questionID'=>$singleExamQ);
-  $string1 = http_build_query($string1);
-
+  $string1 = http_build_query($data1);
+  
   $send1 = curl_init();
   curl_setopt($send1, CURLOPT_URL, "https://web.njit.edu/~psn24/CS490/backend_logic.php");
   curl_setopt($send1, CURLOPT_POST, true);
@@ -61,19 +62,17 @@ for($i = 0; $i < $count; $i++){
   curl_setopt($send1, CURLOPT_RETURNTRANSFER, true);
   $resp1 = curl_exec($send1); 
   curl_close($send1);
-
+  //echo $resp1;
   $jsonResponse[$i] = $resp1; //putting the required tstcases/funcname..etc for each question in array
   //echo $resp1; 
 } 
 
-$count = count($jsonResponse);
-$ans = explode(",", $ans); //assuming answers are sent comma delimited
+$count1 = count($jsonResponse);
+$ans = explode("~", $ans); //assuming answers are sent tilda delimited
 //for every question response, parse everyone of them
-for($i = 0; $i < $count; $i++){
-
-  $parse = $jsonResponse[$i];
-  $response1 = $parse[0];
-  $obj1 = $json_decode($parse);
+for($i = 0; $i < $count1; $i++){
+  $parse = $jsonResponse[$i]; //the json of testcases/param/etc..
+  $obj1 = json_decode($parse);
   $req_param_names = $obj1->{'parameterVal'};//parameters
   $req_funcname = $obj1->{'functions'};//functions
   $questID = $obj1->{'questionID'};//questionID
@@ -140,8 +139,8 @@ $studentparams = $splitagain[1]; //the student parameters
 
 $studentparams = preg_replace("/\s/","", $studentparams);
 $parameters = preg_replace("/\s/","", $parameters);
-echo "$studentparams\n";
-echo "$parameters\n";
+//echo "$studentparams\n";
+//echo "$parameters\n";
 
 if(strcmp($studentparams, $parameters) == 0){
   echo "correct parameter names\n";
@@ -152,7 +151,6 @@ else{
 } 
 
 $newparams = $testcase_input; //the testcase input parameters.
-//$student_testanswer = str_replace($params, $newparams, $student_answer);
 
 $file = "testing_cases.py"; //change this later to match with the ucid.
 /*$open = fopen($file, 'w') or die("Unable to open file!\n");
@@ -163,8 +161,8 @@ file_put_contents($file, $student_answer . "\n" . "print($student_funcname($newp
 
 
 $runpython = exec("python testing_cases.py");
-echo "$runpython\n";
-echo "$testcase_output\n";
+//echo "$runpython\n";
+//echo "$testcase_output\n";
 if ($runpython == $testcase_output){
   echo "Output was correct\n";
   $grade+=2;
