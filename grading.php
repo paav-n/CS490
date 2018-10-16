@@ -81,14 +81,16 @@ for($i = 0; $i < $count1; $i++){
   $answer = $ans[$i];
   //split the student answers for each question
   //put the values in the function
+  $points_worth += 10;
    $grade1 += grade_exam($answer, $req_funcname, $req_param_names, $case_input, $case_output);
 } 
 
 //get the average of the grades,
-
-  echo "$grade1\n";
-
-/*$newdata = array('grade'=>$grade1, 'struct'=>'storeGrade', 'UCID'=>'jh465');
+  $grade1 = ($grade1/$points_worth)*100; //have to make sure you make it be an int
+  $grade1 = round($grade1);
+  //echo "$grade1\n";
+if($struct == 'gradeExam'){ 
+$newdata = array('grade'=>$grade1, 'struct'=>'storeGrade', 'UCID'=>$ucid);
 $string2 = http_build_query($newdata);
 
 
@@ -99,8 +101,9 @@ curl_setopt($send2, CURLOPT_POSTFIELDS, $string2);
 curl_setopt($send2, CURLOPT_RETURNTRANSFER, true);
 $resp2 = curl_exec($send2);
 
-curl_close($send2); */
+curl_close($send2); 
 
+}
 //function to grade student exam
 function grade_exam($student_answer, $funcname, $parameters, $testcase_input, $testcase_output){
 $grade = 0;
@@ -149,13 +152,10 @@ if(strcmp($studentparams, $parameters) == 0){
 else{
   echo "the parameter names are incorrect, 1 point off\n";
 } 
-
+//later if we're using more than one testcase_input per question have to split them and loop for each
 $newparams = $testcase_input; //the testcase input parameters.
 
 $file = "testing_cases.py"; //change this later to match with the ucid.
-/*$open = fopen($file, 'w') or die("Unable to open file!\n");
-fwrite($open, $student_answer . "\n" . "print($student_funcname($newparams))");
-fclose($open); */
 
 file_put_contents($file, $student_answer . "\n" . "print($student_funcname($newparams))");
 
@@ -165,7 +165,7 @@ $runpython = exec("python testing_cases.py");
 //echo "$testcase_output\n";
 if ($runpython == $testcase_output){
   echo "Output was correct\n";
-  $grade+=2;
+  $grade+=7;
 }
 else{
   echo "output incorrect, 2 points off\n";
