@@ -18,8 +18,13 @@ window.onload = function() {
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
         var resp = this.responseText;
-      }
+    }
+	  if(resp.length == 0){
+	     document.getElementById('text').innerHTML = "<p>Your grade has not been posted! Check again later.";
+    }
+	  else{	  
        document.getElementById('text').innerHTML = "<p>You got a "+resp+" on your exam!</p>";
+	  }
   };
   xmlhttp.send(params);
   
