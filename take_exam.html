@@ -1,0 +1,84 @@
+<html>
+<head>
+<style>
+  textarea{
+    min-width:700px;
+    min-height:100px;
+  }
+</style>
+</head>
+<body>
+<p id="msg"></p>
+<a href="/~lr66/download/st_index.html">Back to Main Menu</a></br>
+<h2 style="font-variant:petite-caps">Exam</h2>
+<p><span id="text"></span></p>
+<p id="test"></p>
+<p id="btn"><input type="button" value="Submit" onclick="submitExam()"/></p>
+</body>
+<script>
+ window.onload = function() {
+  questionID=""
+  if (localStorage.getItem('UCID')) {
+    document.getElementById('msg').innerHTML = "Hello " + localStorage.getItem('UCID')+ "!"; 
+  }
+
+  var params = "struct=takeExam&examName="+localStorage.getItem('examName');
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("POST","curlpost.php", true);
+  xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      //var resp = this.responseText;
+      var resp = JSON.parse(this.responseText); 
+      if(resp == null){
+        document.getElementById('btn').innerHTML = "<p>This exam is no longer available.</p>";
+      return false;
+      }
+      var txt="";
+      for (var i=0; i<resp.length; i++) {
+            
+           txt += (i+1) + ") "+resp[i].questionText+"</br><textarea id='"+resp[i].questionID+"' class='answers' placeholder='Enter answer here'></textarea></br></br></br>";
+           if(i<resp.length-1){
+              questionID +=resp[i].questionID+",";
+            }
+            else{
+              questionID +=resp[i].questionID;
+            }
+        }
+        var rslt = txt;
+      document.getElementById('text').innerHTML = rslt;
+      
+    }
+  };
+  xmlhttp.send(params);
+  }
+
+  function submitExam(){
+    var rslt = questionID.split(',');
+    //var x= document.getElementsByClassName('answers')[0].value;
+    var ansText ="";
+    for(var i=0; i<rslt.length; i++){
+      if(i<rslt.length-1){
+        ansText += document.getElementById(rslt[i]).value+"~";
+      }
+      else{
+        ansText += document.getElementById(rslt[i]).value;
+      }
+    }
+    var answer =ansText.replace("+","%2B");
+    
+    var params="examName="+localStorage.getItem('examName')+"&examQ="+questionID+"&UCID="+localStorage.getItem('UCID')+"&answer="+answer+"&struct=storeAnswers";
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("POST","curlpost.php", true);
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) { 
+      document.getElementById('test').innerHTML = this.responseText;
+        alert("Exam submitted!");
+        //window.location.href = '/~lr66/download/st_index.html';
+      }
+    };
+  xmlhttp.send(params);
+  }
+</script>
+</html>

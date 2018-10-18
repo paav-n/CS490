@@ -1,0 +1,25 @@
+<html>
+<head>
+<title>NJIT Instructor Home</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<p><span id="msg"></span> | <a href="/~lr66/download/login.html" onclick="logOff()">Log Off</a></p>
+<h2 style="font-variant:small-caps">Home</h2>
+  <a href="/~lr66/download/newQuestion.html">Add a Question to Test Bank</a></br>
+  <a href="/~lr66/download/create_exam.html">Create Exam</a></br>
+  <a href="/~lr66/download/confirm_grade.html">Confirm/Release Exam Grade</a> <!--storeAnswers-->
+</body>
+</html>
+<script>
+window.onload = function() { 
+  if (localStorage.getItem('UCID')) {
+    document.getElementById('msg').innerHTML = "Welcome " + localStorage.getItem('UCID')+ "!"; 
+ }
+};
+
+function logOff(){
+  localStorage.removeItem('UCID');
+}
+
+</script>

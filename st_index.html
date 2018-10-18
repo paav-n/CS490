@@ -1,0 +1,22 @@
+<html>
+<head>
+</head>
+<body>
+<p><span id="msg"></span> | <a href="/~lr66/download/login.html" onclick="logOff()">Log Off</a></p>
+<h2 style="font-variant:small-caps">Home</h2>
+ <a href="/~lr66/download/view_exams.html">View Open Exams</a></br>
+  <a href="/~lr66/download/view_grade.html">View Grade</a></br>
+</body>
+<script>
+window.onload = function() { 
+  if (localStorage.getItem('UCID')) {
+    document.getElementById('msg').innerHTML = "Welcome " + localStorage.getItem('UCID')+ "!"; 
+ }
+};
+
+function logOff(){
+  localStorage.removeItem('UCID');
+
+}
+</script>
+</html>

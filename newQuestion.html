@@ -1,0 +1,148 @@
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NJIT Testing</title>
+    <style>
+        html, body {
+            height: 91%;
+            width:100%;
+        }
+        .panes-container {
+            display: flex;
+            width: 100%;
+            overflow: hidden;
+        }
+        .left-pane {
+            width: 50%;
+            background: #ccc;
+        }
+        .panes-separator {
+            width: 1%;
+            background: red;
+            position: relative;
+        }
+        .right-pane {
+            flex: auto;
+            background: #eee;
+        }
+        .panes-container,
+        .panes-separator,
+        .left-pane,
+        .right-pane {
+            margin: 0px;
+            padding: 10px;
+            height: 100%;
+        }
+        select{
+          min-width:200px;
+        }
+        textarea{
+          min-width:525px;
+          min-height:100px;
+        }
+        .msg{
+          padding:15px
+        }
+    </style>
+</head>
+
+<body>
+<p id="msg" class="msg"></p>
+<a class="msg" href="/~lr66/download/inst_index.html">Back to Main Menu</a>
+<div class="panes-container">
+  <div class="left-pane" id="left-pane">
+<h2 style="font-variant:petite-caps">New Question</h2>
+
+<h4>New Question Details</h4>
+<form>
+<label for="difficulty">Difficulty</label>
+<select id="difficulty" required>
+  <option value="" disabled selected>Select</option>
+  <option>Mild</option>
+  <option>Medium</option>
+  <option>Hot</option></select></br></br>
+<label for="category">Category</label>
+<select id="category" required>
+  <option value="" disabled selected>Select</option></br>
+  <option>Loops</option>
+  <option>Conditional</option>
+  <option>General</option></select></br><br>
+<label for="qText">Question Text</label></br>
+<textarea id="qText" required></textarea>
+<hr>
+<h4>New Question Test Case Details</h4>
+
+<label for="funcName">Function Name:</label>
+<input id="funcName" type="text" required /></br></br>
+<label for="paramName">Parameter Names:</label><small> (comma separated)</small>
+<input id="paramName" type="text" required /></br></br>
+<label for="parameters">Parameters: </label><small> (comma separated)</small>
+<input id="parameters" type="text" required /><!--input type="button" value="Add Param"/--></br></br>
+<label for="testcase">Result</label>
+<input id="testcase" type="text" required />
+
+<hr>
+&nbsp;<input type="button" value="Add Question" onclick="AddQuestion()"/>
+</div>
+  <div class="panes-separator" id="panes-separator"></div>
+    <div class="right-pane" id="right-pane">
+     <h4>Question Bank</h4>
+     <table id="questions">
+      </table>
+  </div>  
+</div>  
+<p><span id="text" style="color:red"></span></p>
+</form>
+</html>
+
+<script>
+window.onload = function() { 
+  if (localStorage.getItem('UCID')) {
+    document.getElementById('msg').innerHTML = "Hello " + localStorage.getItem('UCID')+ "!"; 
+ }
+ var tableData="<th>ID</th><th>Questions</th>";
+  var params = "struct=showAll";
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("POST","curlpost.php", true);
+  xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      resp = JSON.parse(this.responseText);
+      for (var i=0; i<resp.length; i++) {
+        var data= resp[i];
+        tableData+='<tr><td>'+data.questionID+'</td><td>'+data.questionText+'</td></tr>';
+      }
+       document.getElementById('questions').innerHTML = tableData;
+    }
+  };
+  xmlhttp.send(params);
+ 
+}
+
+function AddQuestion(){
+  //capture user input
+  var newQ = document.getElementById('qText').value;
+  var difficulty = document.getElementById('difficulty').value;
+  var category = document.getElementById('category').value;
+  var funcName = document.getElementById('funcName').value;
+  var parameters = document.getElementById('parameters').value;
+  var testcase = document.getElementById('testcase').value;
+  var parameterVal = document.getElementById('paramName').value;
+  
+  var params="newQ="+newQ+"&difficulty="+difficulty+"&category="+category+"&funcName="+funcName+"&parameters="+parameters+"&testcase="+testcase+"&parameterVal="+parameterVal+"&struct=addQuestion";
+  
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("POST","curlpost.php", true);
+  xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xmlhttp.onreadystatechange = function() {
+  if (this.readyState == 4 && this.status == 200) {
+    alert('Question added to test bank!');
+    //var resp = xmlhttp.responseText
+    //document.getElementById('text').innerHTML = resp;
+  }
+  };
+  xmlhttp.send(params);
+  //document.getElementById('text').innerHTML = params;
+  
+}
+</script>

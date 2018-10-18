@@ -1,0 +1,33 @@
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<p id="msg"></p>
+<h2 style="font-variant:petite-caps">View Grade</h3>
+<a href="/~lr66/download/st_index.html">Back to Main Menu</a></br></br>
+<h3>Results</h3>
+<p id="text"></p>
+</body>
+<script>
+window.onload = function() { 
+  var params="struct=viewGrade&UCID=jh465";
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("POST","curlpost.php", true);
+  xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var resp = this.responseText;
+      }
+       document.getElementById('text').innerHTML = "<p>You got a "+resp+" on your exam!</p>";
+  };
+  xmlhttp.send(params);
+  
+  
+  
+  if (localStorage.getItem('UCID')) {
+    document.getElementById('msg').innerHTML = "Hello " + localStorage.getItem('UCID')+ "!"; 
+ }
+}
+</script>
+</html>

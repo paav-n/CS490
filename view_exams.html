@@ -1,0 +1,40 @@
+<html>
+<head>
+</head>
+<body>
+<p id="msg"></p>
+<h2 style="font-variant:petite-caps">View Open Exams</h3>
+<a href="/~lr66/download/st_index.html">Back to Main Menu</a></br>
+<h4>Select Exam</h4>
+<p id="text"></p>
+</body>
+<script>
+window.onload = function() {
+  if (localStorage.getItem('UCID')) {
+    document.getElementById('msg').innerHTML = "Hello " + localStorage.getItem('UCID')+ "!"; 
+  }
+  
+  var params="struct=viewExams";
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("POST","curlpost.php", true);
+  xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xmlhttp.onreadystatechange = function() {
+  if (this.readyState == 4 && this.status == 200) {
+    var resp = JSON.parse(this.responseText);
+    var examLinks = "";
+    for(var i=0; i<resp.length; i++){
+      examLinks += (i+1)+')  '+'<a href="/~lr66/download/take_exam.html" onclick="setExam(this)" id='+resp[i].examName+' >'+resp[i].examName+'</a><br>';
+    }
+    document.getElementById('text').innerHTML = examLinks;
+  }
+  };
+  xmlhttp.send(params);
+}
+
+function setExam(a){
+  (function (global){
+    global.localStorage.setItem('examName',a.id);
+  }(window));
+}
+</script>
+</html>
