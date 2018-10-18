@@ -86,6 +86,33 @@ if ($struct == 'showAll'){
 	}
 	echo json_encode($data);
 }
+
+if ($struct == 'viewExams'){
+	$s="SELECT * from exams";
+	$t=mysqli_query($db,$s);
+	while($row = mysqli_fetch_array($t)){
+		$examName = $row[1];
+		$data[] = array(
+			"examName" => $examName
+			);
+	}
+	echo json_encode($data);
+}
+
+if ($struct == 'viewStudents'){
+	$s="SELECT * from people where role='student'";
+	$t=mysqli_query($db,$s);
+	while($row = mysqli_fetch_array($t)){
+		$stud = $row[0];
+		$fra = $row[3];
+		$data[] = array(
+			"UCID" => $stud,
+			"grade" => $fra
+			);
+	}
+	echo json_encode($data);	
+}
+
 if ($struct == 'storeAnswers'){
 	//give me examName, examQ, UCID, answer
 	$s="SELECT examID from exams where examName='$examName'";
@@ -129,13 +156,18 @@ if ($struct == 'releaseGrade'){
 	SET releaseGrade = '$theGrade'
 	where UCID = '$UCID'";
 	mysqli_query( $db,  $s );
+	$data[] = array(
+			"UCID" => $UCID,
+			"grade" => $theGrade
+			);
+	echo json_encode($data);
 }
 if ($struct == 'viewGrade'){
 	$s="SELECT releaseGrade from people where UCID='$UCID'";
 	$t=mysqli_query($db,$s);
 	$row=mysqli_fetch_row($t);
 	$theGrade = $row[0];
-	echo "You got a $theGrade";
+	echo $theGrade;
 }
 mysqli_free_result($s);
 mysqli_close($db);
