@@ -44,7 +44,8 @@ window.onload = function() {
 };
 
 function releaseGrade(){
-  var params="struct=releaseGrade&UCID=jh465";
+  var sUsers = GetSelectedStudents();
+  var params="struct=releaseGrade&UCID="+sUsers;
     var xmlhttp = new XMLHttpRequest();
   xmlhttp.open("POST","curlpost.php", true);
   xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -52,10 +53,24 @@ function releaseGrade(){
     if (this.readyState == 4 && this.status == 200) {
     //document.getElementById('test').innerHTML = this.responseText;
       alert('Grade released!');
-      
     }
   }
     xmlhttp.send(params);
+}
+
+function GetSelectedStudents(){
+  var checkedBoxes = document.querySelectorAll('input[name=cb]:checked');
+  var cbValues="";
+  for(var i=0; i<checkedBoxes.length; i++){
+    if(i<checkedBoxes.length-1){
+       cbValues+= checkedBoxes[i].value+',';
+    }
+    else{
+      cbValues+= checkedBoxes[i].value;
+    }
+  }
+  return cbValues;
+   //document.getElementById('text').innerHTML = examQs;
 }
 </script>
 </html>
